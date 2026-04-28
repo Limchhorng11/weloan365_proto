@@ -1,0 +1,94 @@
+"use client";
+
+import Link from "next/link";
+import { Bell } from "lucide-react";
+import { Avatar } from "@/components/ui/Avatar";
+import { QuickActions } from "@/components/domain/home/QuickActions";
+import { PromoCarousel } from "@/components/domain/home/PromoCarousel";
+import { NewsSection } from "@/components/domain/home/NewsSection";
+import { ProductCard } from "@/components/domain/loan/ProductCard";
+import { mockUser, loanProducts } from "@/lib/mock";
+
+export default function HomePage() {
+  return (
+    <div className="flex h-full flex-col animate-fade-in">
+      <div
+        className="flex-shrink-0 rounded-b-[28px] px-5 pb-3 pt-5 text-white"
+        style={{ background: "linear-gradient(180deg, var(--primary) 0%, #4578ff 100%)" }}
+      >
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <Avatar name={mockUser.name} bg="rgba(255,255,255,.2)" />
+            <div>
+              <small className="text-[11px] opacity-80">Welcome back,</small>
+              <div className="text-sm font-semibold">{mockUser.name}</div>
+            </div>
+          </div>
+          <Link
+            href="/more/notifications"
+            className="relative grid h-10 w-10 place-items-center rounded-xl"
+            style={{ background: "rgba(255,255,255,.15)" }}
+          >
+            <Bell className="h-5 w-5" />
+            <span
+              className="absolute right-2 top-2 h-2 w-2 rounded-full"
+              style={{ background: "var(--warn)", border: "2px solid var(--primary)" }}
+            />
+          </Link>
+        </div>
+
+        <Link
+          href="/my-loan?tab=active"
+          className="mt-4 block rounded-2xl p-4 backdrop-blur transition active:scale-[.99]"
+          style={{ background: "rgba(255,255,255,.15)" }}
+        >
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] uppercase tracking-wider opacity-80">
+              Total Outstanding
+            </span>
+            <span
+              className="rounded-md px-1.5 py-0.5 text-[10px] font-semibold"
+              style={{ background: "rgba(255,255,255,.2)" }}
+            >
+              View loans →
+            </span>
+          </div>
+          <div className="mt-1 text-[28px] font-bold">$7,290.00</div>
+          <div className="mt-3 flex justify-between text-xs opacity-90">
+            <span>Next payment · May 15</span>
+            <span>$162.50</span>
+          </div>
+        </Link>
+      </div>
+
+      <div className="flex-1 overflow-y-auto pb-24">
+        <QuickActions />
+
+        <h3 className="section-title px-4">Promotions</h3>
+        <PromoCarousel />
+
+        <div className="px-4">
+          <div className="my-2.5 flex items-center justify-between">
+            <h3 className="section-title m-0">Popular loan products</h3>
+            <Link
+              href="/loan/products"
+              className="text-sm font-medium"
+              style={{ color: "var(--primary)" }}
+            >
+              See all
+            </Link>
+          </div>
+          {loanProducts.slice(0, 3).map((p) => (
+            <ProductCard
+              key={p.id}
+              product={p}
+              href={`/loan/products/${p.id}`}
+            />
+          ))}
+        </div>
+
+        <NewsSection />
+      </div>
+    </div>
+  );
+}
