@@ -1,7 +1,10 @@
 import type { InputHTMLAttributes, ReactNode, TextareaHTMLAttributes } from "react";
 import { cn } from "@/lib/utils/cn";
 
-interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+// Omit `prefix` because the HTML attribute is `string`, but our prefix is a
+// ReactNode (e.g. an icon or flag). Same idea for any other native attribute
+// you ever want to repurpose on this component.
+interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "prefix"> {
   label?: string;
   prefix?: ReactNode;
 }

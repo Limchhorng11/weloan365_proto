@@ -1,0 +1,9 @@
+# Files Vercel should not upload during deployment.
+# Note: .gitignore already covers most things; this file is for Vercel-specific exclusions.
+
+_legacy-prototype/
+*.local
+.env.local
+.env.*.local
+.next/
+node_modules/

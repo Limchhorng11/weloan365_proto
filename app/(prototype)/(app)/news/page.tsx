@@ -2,12 +2,11 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Pin } from "lucide-react";
+import { Newspaper, Pin } from "lucide-react";
 import { NavHeader } from "@/components/ui/NavHeader";
 import { Screen, ScreenBody } from "@/components/ui/Screen";
 import { Segmented } from "@/components/ui/Segmented";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { Newspaper } from "lucide-react";
 import { DynamicIcon } from "@/components/domain/loan/DynamicIcon";
 import { newsItems } from "@/lib/mock";
 import type { NewsCategory } from "@/lib/types";

@@ -5,7 +5,8 @@
       "Bash(cp -r \"\\(app\\)\" \"\\(app\\)_tmp\")",
       "PowerShell($base = \"D:\\\\KOSIGN_PRODUCT\\\\PRODUCT\\\\weloan365\\\\mobile\\\\app\"; New-Item -ItemType Directory -Force -Path \"$base\\\\\\(prototype\\)\" | Out-Null; Move-Item -LiteralPath \"$base\\\\\\(auth\\)\" -Destination \"$base\\\\\\(prototype\\)\\\\\\(auth\\)\" -Force; Move-Item -LiteralPath \"$base\\\\\\(app\\)\" -Destination \"$base\\\\\\(prototype\\)\\\\\\(app\\)\" -Force; Move-Item -LiteralPath \"$base\\\\page.tsx\" -Destination \"$base\\\\\\(prototype\\)\\\\page.tsx\" -Force; Get-ChildItem -LiteralPath \"$base\\\\\\(prototype\\)\")",
       "PowerShell($base = \"D:\\\\KOSIGN_PRODUCT\\\\PRODUCT\\\\weloan365\\\\mobile\\\\app\"; Move-Item -LiteralPath \"$base\\\\\\(auth\\)_tmp\" -Destination \"$base\\\\\\(prototype\\)\\\\\\(auth\\)\" -Force; Get-ChildItem -LiteralPath \"$base\\\\\\(prototype\\)\")",
-      "PowerShell($base = \"D:\\\\KOSIGN_PRODUCT\\\\PRODUCT\\\\weloan365\\\\mobile\"; Remove-Item -LiteralPath \"$base\\\\app\\\\\\(workshop\\)\" -Recurse -Force -Confirm:$false; Remove-Item -LiteralPath \"$base\\\\content\" -Recurse -Force -Confirm:$false; Remove-Item -LiteralPath \"$base\\\\lib\\\\workshop.ts\" -Force -Confirm:$false; Get-ChildItem -LiteralPath \"$base\\\\app\")"
+      "PowerShell($base = \"D:\\\\KOSIGN_PRODUCT\\\\PRODUCT\\\\weloan365\\\\mobile\"; Remove-Item -LiteralPath \"$base\\\\app\\\\\\(workshop\\)\" -Recurse -Force -Confirm:$false; Remove-Item -LiteralPath \"$base\\\\content\" -Recurse -Force -Confirm:$false; Remove-Item -LiteralPath \"$base\\\\lib\\\\workshop.ts\" -Force -Confirm:$false; Get-ChildItem -LiteralPath \"$base\\\\app\")",
+      "Bash(npx next *)"
     ]
   }
 }

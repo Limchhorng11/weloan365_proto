@@ -32,6 +32,54 @@ side panel** on the left with shortcuts to every screen. On narrow widths
 | `npm start` | Run production server |
 | `npm run lint` | ESLint |
 | `npm run type-check` | Run `tsc --noEmit` |
+| `npm run clean` | Remove `.next/` build artifacts |
+
+## Deploying to Vercel
+
+The project is preconfigured for Vercel — no environment variables, no
+build customization beyond what `vercel.json` already specifies.
+
+### Option A — Connect a Git repo (recommended)
+
+1. Push this folder to GitHub / GitLab / Bitbucket.
+2. Go to [vercel.com/new](https://vercel.com/new) and import the repo.
+3. **Root directory** → set to `mobile/` (this folder).
+4. **Framework preset** → Next.js (auto-detected).
+5. Click **Deploy**. First build takes ~60–90 seconds.
+
+### Option B — Vercel CLI
+
+```bash
+npm i -g vercel
+vercel login
+vercel --prod          # deploy production
+```
+
+### What's already set up
+
+- **`vercel.json`** — pins region to `sin1` (Singapore — closest to
+  Cambodia) and tells Vercel to use Next.js detection.
+- **`.vercelignore`** — keeps `_legacy-prototype/` and local env files
+  out of deployments.
+- **Node engine** — pinned to `>=18.18.0` in `package.json`. Vercel will
+  use Node 20 by default which satisfies that.
+- **`useSearchParams` Suspense boundary** — `app/(prototype)/(app)/my-loan/page.tsx`
+  is a thin server wrapper that mounts `MyLoanClient` inside `<Suspense>`.
+  This is required for Next.js 14 production builds; without it, the
+  build fails with `useSearchParams() should be wrapped in a suspense boundary`.
+- **No env vars needed** — the prototype is fully mocked.
+
+### Verifying locally before deploy
+
+```bash
+npm install
+npm run lint        # should report 0 errors
+npm run type-check  # should report 0 errors
+npm run build       # should complete; produces .next/
+npm start           # smoke-test the production build at localhost:3000
+```
+
+If any of those fail, the Vercel build will too.
 
 ## Project structure
 

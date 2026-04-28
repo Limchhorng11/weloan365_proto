@@ -3,12 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "description": "Weloan365 mobile app — Next.js prototype",
+  "engines": {
+    "node": ">=18.18.0"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "clean": "rimraf .next out"
   },
   "dependencies": {
     "next": "14.2.5",
@@ -29,6 +33,7 @@
     "postcss": "8.4.40",
     "autoprefixer": "10.4.19",
     "eslint": "8.57.0",
-    "eslint-config-next": "14.2.5"
+    "eslint-config-next": "14.2.5",
+    "rimraf": "5.0.10"
   }
 }
