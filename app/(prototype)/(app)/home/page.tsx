@@ -9,12 +9,23 @@ import { NewsSection } from "@/components/domain/home/NewsSection";
 import { ProductCard } from "@/components/domain/loan/ProductCard";
 import { mockUser, loanProducts } from "@/lib/mock";
 
+/**
+ * Home screen.
+ *
+ * The whole page is one scroll container so QuickActions can visually
+ * "float up" over the blue balance card via negative top margin (`-mt-5`).
+ * If we used a separate inner overflow-y-auto, that container would clip
+ * the negative margin and the overlap effect would disappear.
+ */
 export default function HomePage() {
   return (
-    <div className="flex h-full flex-col animate-fade-in">
+    <div className="h-full overflow-y-auto pb-24 animate-fade-in">
       <div
-        className="flex-shrink-0 rounded-b-[28px] px-5 pb-3 pt-5 text-white"
-        style={{ background: "linear-gradient(180deg, var(--primary) 0%, #4578ff 100%)" }}
+        className="rounded-b-[28px] px-5 pb-8 pt-5 text-white"
+        style={{
+          background:
+            "linear-gradient(180deg, var(--primary) 0%, #4578ff 100%)",
+        }}
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2.5">
@@ -32,7 +43,10 @@ export default function HomePage() {
             <Bell className="h-5 w-5" />
             <span
               className="absolute right-2 top-2 h-2 w-2 rounded-full"
-              style={{ background: "var(--warn)", border: "2px solid var(--primary)" }}
+              style={{
+                background: "var(--warn)",
+                border: "2px solid var(--primary)",
+              }}
             />
           </Link>
         </div>
@@ -61,34 +75,35 @@ export default function HomePage() {
         </Link>
       </div>
 
-      <div className="flex-1 overflow-y-auto pb-24">
-        <QuickActions />
+      {/* QuickActions sits outside the gradient container and uses -mt-7
+          to overlap. Because we no longer have a clipping scroll boundary
+          between them, the float-up effect renders correctly. */}
+      <QuickActions />
 
-        <h3 className="section-title px-4">Promotions</h3>
-        <PromoCarousel />
+      <h3 className="section-title px-4">Promotions</h3>
+      <PromoCarousel />
 
-        <div className="px-4">
-          <div className="my-2.5 flex items-center justify-between">
-            <h3 className="section-title m-0">Popular loan products</h3>
-            <Link
-              href="/loan/products"
-              className="text-sm font-medium"
-              style={{ color: "var(--primary)" }}
-            >
-              See all
-            </Link>
-          </div>
-          {loanProducts.slice(0, 3).map((p) => (
-            <ProductCard
-              key={p.id}
-              product={p}
-              href={`/loan/products/${p.id}`}
-            />
-          ))}
+      <div className="px-4">
+        <div className="my-2.5 flex items-center justify-between">
+          <h3 className="section-title m-0">Popular loan products</h3>
+          <Link
+            href="/loan/products"
+            className="text-sm font-medium"
+            style={{ color: "var(--primary)" }}
+          >
+            See all
+          </Link>
         </div>
-
-        <NewsSection />
+        {loanProducts.slice(0, 3).map((p) => (
+          <ProductCard
+            key={p.id}
+            product={p}
+            href={`/loan/products/${p.id}`}
+          />
+        ))}
       </div>
+
+      <NewsSection />
     </div>
   );
 }

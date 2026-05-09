@@ -15,7 +15,13 @@ const langs: { value: Lang; label: string; native: string; flag: string }[] = [
 
 /**
  * Welcome / Language Toggle (Workshop ref: Session 1.F1, screen 3).
- * Shown after onboarding, before sign-in / sign-up.
+ *
+ * **First-time only screen.** Shown right after onboarding for new installs.
+ * Returning users (already have an account on the device) bypass this screen
+ * and go straight to /sign-in.
+ *
+ * Because only first-time users land here, the only CTA is "Get Started" →
+ * sign-up. There is no "Sign In" button on this screen.
  */
 export default function WelcomePage() {
   const [lang, setLang] = useState<Lang>("en");
@@ -40,8 +46,8 @@ export default function WelcomePage() {
             className="mx-2 mt-2 text-sm leading-relaxed"
             style={{ color: "var(--text-2)" }}
           >
-            Choose your language to continue. You can change it anytime later
-            in App Settings.
+            Let&apos;s get you set up. First, pick your language — you can
+            change it later in App Settings.
           </p>
         </div>
 
@@ -108,14 +114,9 @@ export default function WelcomePage() {
         </Card>
       </ScreenBody>
       <StickyFooter>
-        <div className="flex flex-col gap-2">
-          <Link href="/sign-in" className="btn btn-primary">
-            Sign In
-          </Link>
-          <Link href="/sign-up/phone" className="btn btn-ghost">
-            Create new account
-          </Link>
-        </div>
+        <Link href="/sign-up/phone" className="btn btn-primary">
+          Get Started
+        </Link>
       </StickyFooter>
     </Screen>
   );

@@ -49,7 +49,7 @@ export function QuickActions() {
 
   return (
     <div
-      className="relative z-[5] mx-4 -mt-5 grid grid-cols-4 gap-2 rounded-2xl p-3.5 shadow-md"
+      className="relative z-[5] mx-4 -mt-7 grid grid-cols-4 gap-2 rounded-2xl p-3.5 shadow-md"
       style={{ background: "var(--surface)" }}
     >
       {items.map((it) => {
