@@ -3,7 +3,15 @@
 import Link from "next/link";
 import { notFound, useParams } from "next/navigation";
 import { useState } from "react";
-import { Calendar, Check, Info, X } from "lucide-react";
+import {
+  AlertCircle,
+  Calendar,
+  CalendarClock,
+  Check,
+  Info,
+  ShieldCheck,
+  X,
+} from "lucide-react";
 import { NavHeader } from "@/components/ui/NavHeader";
 import { Screen, ScreenBody, StickyFooter } from "@/components/ui/Screen";
 import { Card, SectionTitle } from "@/components/ui/Card";
@@ -29,6 +37,25 @@ export default function GuarantorDetailPage() {
   if (!loan) notFound();
 
   const [decision, setDecision] = useState<Decision>("pending");
+
+  // ---------- Dashboard stats ----------
+  // Computed live from the borrower's schedule so guarantor sees real numbers.
+  const paidRows = loan.schedule.filter((r) => r.status === "paid");
+  const overdueRows = loan.schedule.filter((r) => r.status === "overdue");
+  const onTimePaid = paidRows.length; // mock: all paid rows assumed on-time
+  const onTimeRate =
+    paidRows.length === 0
+      ? 100
+      : Math.round((onTimePaid / paidRows.length) * 100);
+  const totalPaidAmount = paidRows.reduce((s, r) => s + Number(r.amount), 0);
+  const remainingExposure = loan.amount - totalPaidAmount;
+  const monthsLeft = loan.totalMonths - loan.paidMonths;
+  const progressPct = Math.round(
+    (loan.paidMonths / loan.totalMonths) * 100,
+  );
+  // 12-month strip for the activity chart — anchor around the current period.
+  const chartStart = Math.max(0, loan.paidMonths - 4);
+  const chartRows = loan.schedule.slice(chartStart, chartStart + 12);
 
   const onAccept = () => {
     setDecision("accepted");
@@ -204,6 +231,233 @@ export default function GuarantorDetailPage() {
             </div>
           </div>
         </Card>
+
+        {/* ────────── GUARANTOR DASHBOARD ──────────
+            Gives the guarantor an at-a-glance read of:
+              • exposure (what you'd owe if borrower defaulted today)
+              • borrower's track record (on-time %, overdue count)
+              • timeline (months left, visual paid-vs-pending chart)
+            Privacy: no PII or borrower financials beyond the loan terms. */}
+        <SectionTitle>Borrower track record</SectionTitle>
+
+        {/* Hero exposure card */}
+        <div
+          className="rounded-2xl p-4 text-white"
+          style={{
+            background: "linear-gradient(135deg, var(--primary), #6aa3ff)",
+          }}
+        >
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <div className="text-[11px] font-semibold uppercase tracking-wider opacity-85">
+                Your max exposure today
+              </div>
+              <div className="mt-1 text-[26px] font-bold leading-none">
+                {formatMoney(remainingExposure)}
+              </div>
+              <div className="mt-1 text-[11px] opacity-90">
+                Down from {formatMoney(loan.amount)} originally
+              </div>
+            </div>
+            <div
+              className="grid h-10 w-10 flex-shrink-0 place-items-center rounded-xl"
+              style={{ background: "rgba(255,255,255,.2)" }}
+            >
+              <ShieldCheck className="h-5 w-5" />
+            </div>
+          </div>
+
+          {/* Progress bar */}
+          <div
+            className="mt-4 h-2 overflow-hidden rounded-full"
+            style={{ background: "rgba(255,255,255,.2)" }}
+          >
+            <div
+              className="h-full rounded-full bg-white"
+              style={{ width: `${progressPct}%` }}
+            />
+          </div>
+          <div className="mt-2 flex justify-between text-[11px] opacity-90">
+            <span>
+              {loan.paidMonths}/{loan.totalMonths} months repaid
+            </span>
+            <span>{progressPct}%</span>
+          </div>
+        </div>
+
+        {/* 3 stat cards */}
+        <div className="mt-3 grid grid-cols-3 gap-2">
+          <div
+            className="rounded-2xl p-3 text-center shadow-sm"
+            style={{ background: "var(--surface)" }}
+          >
+            <CalendarClock
+              className="mx-auto h-5 w-5"
+              style={{ color: "var(--primary)" }}
+            />
+            <div className="mt-1.5 text-[18px] font-bold leading-none">
+              {monthsLeft}
+            </div>
+            <div
+              className="mt-1 text-[10px] uppercase tracking-wider"
+              style={{ color: "var(--text-3)" }}
+            >
+              Months left
+            </div>
+          </div>
+          <div
+            className="rounded-2xl p-3 text-center shadow-sm"
+            style={{ background: "var(--surface)" }}
+          >
+            <Check
+              className="mx-auto h-5 w-5"
+              style={{ color: "var(--accent)" }}
+            />
+            <div
+              className="mt-1.5 text-[18px] font-bold leading-none"
+              style={{ color: overdueRows.length === 0 ? "var(--accent)" : "var(--text)" }}
+            >
+              {onTimeRate}%
+            </div>
+            <div
+              className="mt-1 text-[10px] uppercase tracking-wider"
+              style={{ color: "var(--text-3)" }}
+            >
+              On-time
+            </div>
+          </div>
+          <div
+            className="rounded-2xl p-3 text-center shadow-sm"
+            style={{ background: "var(--surface)" }}
+          >
+            <AlertCircle
+              className="mx-auto h-5 w-5"
+              style={{
+                color:
+                  overdueRows.length > 0 ? "var(--danger)" : "var(--text-3)",
+              }}
+            />
+            <div
+              className="mt-1.5 text-[18px] font-bold leading-none"
+              style={{
+                color:
+                  overdueRows.length > 0 ? "var(--danger)" : "var(--text)",
+              }}
+            >
+              {overdueRows.length}
+            </div>
+            <div
+              className="mt-1 text-[10px] uppercase tracking-wider"
+              style={{ color: "var(--text-3)" }}
+            >
+              Missed
+            </div>
+          </div>
+        </div>
+
+        {/* 12-month activity chart */}
+        <div
+          className="mt-3 rounded-2xl p-4 shadow-sm"
+          style={{ background: "var(--surface)" }}
+        >
+          <div className="flex items-center justify-between">
+            <div className="text-[11px] font-semibold uppercase tracking-wider"
+                 style={{ color: "var(--text-3)" }}>
+              Payment activity (12-month window)
+            </div>
+            <div className="flex items-center gap-2 text-[10px]"
+                 style={{ color: "var(--text-2)" }}>
+              <span className="inline-flex items-center gap-1">
+                <span
+                  className="h-2 w-2 rounded-sm"
+                  style={{ background: "var(--accent)" }}
+                />
+                Paid
+              </span>
+              <span className="inline-flex items-center gap-1">
+                <span
+                  className="h-2 w-2 rounded-sm"
+                  style={{ background: "var(--primary)" }}
+                />
+                Due
+              </span>
+              <span className="inline-flex items-center gap-1">
+                <span
+                  className="h-2 w-2 rounded-sm"
+                  style={{ background: "var(--border-strong)" }}
+                />
+                Upcoming
+              </span>
+            </div>
+          </div>
+
+          {/* Bars */}
+          <div className="mt-3 flex h-16 items-end gap-1">
+            {chartRows.map((r) => {
+              const bg =
+                r.status === "paid"
+                  ? "var(--accent)"
+                  : r.status === "overdue"
+                    ? "var(--danger)"
+                    : r.status === "due"
+                      ? "var(--primary)"
+                      : "var(--border-strong)";
+              const opacity =
+                r.status === "pending" ? 0.4 : 1;
+              return (
+                <div
+                  key={r.no}
+                  className="flex-1 rounded-t-md"
+                  style={{
+                    background: bg,
+                    opacity,
+                    height: r.status === "pending" ? "55%" : "100%",
+                  }}
+                  title={`#${r.no} · ${r.date} · ${r.status}`}
+                />
+              );
+            })}
+          </div>
+
+          {/* Month labels - first and last only to keep it clean */}
+          <div className="mt-1.5 flex justify-between text-[10px]"
+               style={{ color: "var(--text-3)" }}>
+            <span>{chartRows[0]?.date.split(",")[0] ?? ""}</span>
+            <span>{chartRows[chartRows.length - 1]?.date.split(",")[0] ?? ""}</span>
+          </div>
+
+          <div
+            className="mt-3 flex items-center gap-2 rounded-lg p-2.5 text-[11px]"
+            style={{
+              background:
+                overdueRows.length > 0
+                  ? "rgba(255,77,94,.08)"
+                  : "rgba(0,196,140,.08)",
+              color:
+                overdueRows.length > 0 ? "var(--danger)" : "var(--accent)",
+            }}
+          >
+            {overdueRows.length > 0 ? (
+              <>
+                <AlertCircle className="h-3.5 w-3.5 flex-shrink-0" />
+                <span>
+                  <b>{overdueRows.length}</b>{" "}
+                  {overdueRows.length === 1 ? "payment" : "payments"} missed —
+                  consider this carefully before accepting.
+                </span>
+              </>
+            ) : (
+              <>
+                <ShieldCheck className="h-3.5 w-3.5 flex-shrink-0" />
+                <span>
+                  {paidRows.length === 0
+                    ? "Loan just disbursed — no history yet."
+                    : `${onTimePaid} consecutive on-time payment${onTimePaid === 1 ? "" : "s"}. Strong track record.`}
+                </span>
+              </>
+            )}
+          </div>
+        </div>
 
         <SectionTitle>Loan you would guarantee</SectionTitle>
         <Card>

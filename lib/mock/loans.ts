@@ -122,8 +122,61 @@ export const guarantorLoans: GuarantorLoan[] = [
 ];
 
 export const rejectedLoans: RejectedLoan[] = [
+  // All three May rejections are for **Quick Personal Loan (p1)** — that's
+  // the one product that crosses the 3-per-month cap and gets locked. The
+  // other 4 products in the catalog remain applicable.
+  {
+    id: "l10",
+    productId: "p1",
+    productName: "Quick Personal Loan",
+    amount: 2500,
+    status: "Rejected",
+    rejectedAt: "2026-05-13",
+    reason:
+      "Existing debt obligations exceed the safe debt-service ratio for this amount",
+    icon: "zap",
+    color: "linear-gradient(135deg,#ff4d5e,#c2185b)",
+    suggestions: [
+      "Pay down your existing loans first",
+      "Apply for a smaller amount next month",
+      "Speak with your advisor about debt restructuring",
+    ],
+  },
+  {
+    id: "l9",
+    productId: "p1",
+    productName: "Quick Personal Loan",
+    amount: 3000,
+    status: "Rejected",
+    rejectedAt: "2026-05-08",
+    reason: "Income proof submitted is older than 3 months",
+    icon: "zap",
+    color: "linear-gradient(135deg,#888,#555)",
+    suggestions: [
+      "Upload a payslip from the last 30 days",
+      "Have your employer issue a letter of employment",
+    ],
+  },
+  {
+    id: "l8",
+    productId: "p1",
+    productName: "Quick Personal Loan",
+    amount: 2000,
+    status: "Rejected",
+    rejectedAt: "2026-05-02",
+    reason: "National ID document was expired at the time of submission",
+    icon: "zap",
+    color: "linear-gradient(135deg,#888,#555)",
+    suggestions: [
+      "Renew your National ID before re-applying",
+      "Ensure all KYC documents are valid for at least 6 months",
+    ],
+  },
+  // Historical rejection on a different product — does NOT count toward
+  // the current-month limit (and even if it did, it's a different product).
   {
     id: "l6",
+    productId: "p2",
     productName: "Business Capital Loan",
     amount: 30000,
     status: "Rejected",

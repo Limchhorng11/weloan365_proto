@@ -93,6 +93,9 @@ export interface RejectedLoan extends BaseLoan {
   rejectedAt: string;
   reason: string;
   suggestions: string[];
+  /** The product that was rejected — used to enforce the per-product
+   *  3-rejections-per-month cap. */
+  productId?: ID;
 }
 
 // ============ Chat ============

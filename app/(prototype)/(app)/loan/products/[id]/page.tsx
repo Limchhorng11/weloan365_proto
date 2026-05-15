@@ -2,21 +2,26 @@
 
 import Link from "next/link";
 import { notFound, useParams } from "next/navigation";
-import { Calculator, Check, CheckCircle, PhoneCall, Share2 } from "lucide-react";
+import { Calculator, Check, CheckCircle, Lock, PhoneCall, Share2 } from "lucide-react";
 import { NavHeader } from "@/components/ui/NavHeader";
 import { Screen, ScreenBody, StickyFooter } from "@/components/ui/Screen";
 import { Card, SectionTitle } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
 import { LoanSummary } from "@/components/domain/loan/LoanSummary";
 import { useToast } from "@/lib/hooks/useToast";
 import { getProductById } from "@/lib/mock";
 import { formatMoneyShort } from "@/lib/utils/format";
+import {
+  isProductLockedThisMonth,
+  nextMonthResetLabel,
+} from "@/lib/utils/rejection";
 
 export default function LoanDetailPage() {
   const { id } = useParams<{ id: string }>();
   const toast = useToast();
   const product = getProductById(id);
   if (!product) notFound();
+
+  const locked = isProductLockedThisMonth(product.id);
 
   return (
     <Screen>
@@ -92,9 +97,37 @@ export default function LoanDetailPage() {
         </div>
       </ScreenBody>
       <StickyFooter>
-        <Link href={`/loan/products/${product.id}/request`} className="btn btn-primary">
-          Apply for This Loan
-        </Link>
+        {locked ? (
+          <div className="flex flex-col gap-2">
+            <button
+              type="button"
+              disabled
+              className="btn btn-primary flex items-center justify-center gap-2"
+              style={{
+                opacity: 0.55,
+                cursor: "not-allowed",
+              }}
+              onClick={(e) => e.preventDefault()}
+            >
+              <Lock className="h-4 w-4" />
+              Locked — re-apply on {nextMonthResetLabel()}
+            </button>
+            <Link
+              href="/loan/products"
+              className="btn btn-ghost"
+              style={{ color: "var(--primary)" }}
+            >
+              Browse other products
+            </Link>
+          </div>
+        ) : (
+          <Link
+            href={`/loan/products/${product.id}/request`}
+            className="btn btn-primary"
+          >
+            Apply for This Loan
+          </Link>
+        )}
       </StickyFooter>
     </Screen>
   );

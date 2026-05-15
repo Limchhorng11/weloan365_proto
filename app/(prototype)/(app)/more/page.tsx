@@ -6,10 +6,13 @@ import {
   Calculator,
   FileBarChart,
   FileText,
+  HelpCircle,
   Info,
+  LineChart,
   MapPin,
   Settings,
   Shield,
+  Sparkles,
   Star,
   TrendingUp,
   User,
@@ -58,7 +61,45 @@ export default function MorePage() {
 
         <SectionTitle>Insights &amp; Tools</SectionTitle>
         <ListGroup>
+          <ListRow
+            icon={Sparkles}
+            iconBg="rgba(106,17,203,.12)"
+            iconColor="#6a11cb"
+            title="AI Loan Health Scoring"
+            sub="Get your AI-based credit health score"
+            href="/more/ai-score"
+            right={
+              <span
+                className="rounded-full px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider"
+                style={{
+                  background: "rgba(106,17,203,.12)",
+                  color: "#6a11cb",
+                }}
+              >
+                AI
+              </span>
+            }
+          />
           <ListRow icon={TrendingUp} title="Credit & Insights" sub="Loan health, eligibility" href="/more/insights" />
+          <ListRow
+            icon={LineChart}
+            iconBg="rgba(0,196,140,.12)"
+            iconColor="var(--accent)"
+            title="Income Assessment"
+            sub="Analyze your bank statement & match loans"
+            href="/more/income-assessment"
+            right={
+              <span
+                className="rounded-full px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider"
+                style={{
+                  background: "rgba(0,196,140,.12)",
+                  color: "var(--accent)",
+                }}
+              >
+                New
+              </span>
+            }
+          />
           <ListRow
             icon={FileBarChart}
             title="Check CBC Report"
@@ -78,6 +119,14 @@ export default function MorePage() {
 
         <SectionTitle>About</SectionTitle>
         <ListGroup>
+          <ListRow
+            icon={HelpCircle}
+            iconBg="rgba(31,95,255,.12)"
+            iconColor="var(--primary)"
+            title="FAQ Center"
+            sub="Common questions about loans, payments & accounts"
+            href="/more/faq"
+          />
           <ListRow icon={Settings} title="App Settings" sub="Theme, language, logout" href="/more/settings" />
           <ListRow icon={FileText} title="App Policy" sub="Terms & privacy" href="/more/policy" />
           <ListRow icon={Info} title="About Company" sub="Our vision & mission" href="/more/about" />

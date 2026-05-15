@@ -4,10 +4,12 @@ import {
   BadgeCheck,
   ChevronRight,
   FileSignature,
+  Lock,
   ShieldCheck,
   Upload,
   XCircle,
 } from "lucide-react";
+import Link from "next/link";
 import { notFound, useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { NavHeader } from "@/components/ui/NavHeader";
@@ -24,6 +26,10 @@ import { useAdvisorStore } from "@/stores/advisor";
 import { getProductById, getStaffByCode, mockUser } from "@/lib/mock";
 import { formatMoney } from "@/lib/utils/format";
 import { calculateEmi } from "@/lib/utils/emi";
+import {
+  isProductLockedThisMonth,
+  nextMonthResetLabel,
+} from "@/lib/utils/rejection";
 
 const STEPS = [
   "Loan",
@@ -156,6 +162,85 @@ export default function LoanRequestPage() {
   };
 
   const { emi } = calculateEmi(amount, term, Number(product.rate));
+
+  // Enforce the 3-rejections-per-month rule **for this product**. If the
+  // customer lands here while this specific product is locked, they see a
+  // friendly lock screen instead of the multi-step wizard. Other products
+  // are unaffected.
+  if (isProductLockedThisMonth(product.id)) {
+    return (
+      <Screen>
+        <NavHeader title="Loan Application" />
+        <ScreenBody>
+          <div className="mt-8 text-center">
+            <div
+              className="mx-auto mb-4 grid h-[80px] w-[80px] place-items-center rounded-2xl"
+              style={{
+                background: "rgba(255,77,94,.12)",
+                color: "var(--danger)",
+              }}
+            >
+              <Lock className="h-10 w-10" />
+            </div>
+            <h1 className="text-[22px] font-bold tracking-tight">
+              {product.name} is paused this month
+            </h1>
+            <p
+              className="mt-2 px-6 text-sm leading-relaxed"
+              style={{ color: "var(--text-2)" }}
+            >
+              You&apos;ve reached the 3-rejection limit for{" "}
+              <b>{product.name}</b> this month. To protect your credit
+              profile, you can submit a new application for this product
+              starting <b>{nextMonthResetLabel()}</b>.
+            </p>
+            <p
+              className="mt-2 px-6 text-sm leading-relaxed"
+              style={{ color: "var(--text-2)" }}
+            >
+              <b>Other loan products are still available</b> — browse the
+              catalog to find one that fits.
+            </p>
+          </div>
+
+          <Card
+            className="mt-6"
+            style={{
+              background: "rgba(31,95,255,.05)",
+              border: "1px solid rgba(31,95,255,.15)",
+            }}
+          >
+            <div className="text-sm">
+              <div className="font-medium">What to do in the meantime</div>
+              <ul
+                className="mt-2 list-disc space-y-1.5 pl-5 text-[13px] leading-relaxed"
+                style={{ color: "var(--text-2)" }}
+              >
+                <li>Try a different loan product — most are still open.</li>
+                <li>
+                  Gather stronger income proof for next month&apos;s attempt
+                  on {product.name}.
+                </li>
+                <li>
+                  Talk to your advisor about which product fits your profile.
+                </li>
+              </ul>
+            </div>
+          </Card>
+        </ScreenBody>
+        <StickyFooter>
+          <div className="flex flex-col gap-2">
+            <Link href="/loan/products" className="btn btn-primary">
+              Browse other products
+            </Link>
+            <Link href="/chat" className="btn btn-ghost">
+              Talk to your officer
+            </Link>
+          </div>
+        </StickyFooter>
+      </Screen>
+    );
+  }
 
   return (
     <Screen>
