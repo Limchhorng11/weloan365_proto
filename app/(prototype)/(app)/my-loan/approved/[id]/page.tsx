@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { notFound, useParams } from "next/navigation";
-import { Calendar, ClipboardList, CreditCard, FileText, TrendingDown } from "lucide-react";
+import { Calendar, CreditCard, FileText, TrendingDown } from "lucide-react";
 import { NavHeader } from "@/components/ui/NavHeader";
 import { Screen, ScreenBody } from "@/components/ui/Screen";
 import { Card, SectionTitle } from "@/components/ui/Card";
@@ -116,27 +116,9 @@ export default function ApprovedDetailPage() {
               <Calendar className="h-[18px] w-[18px]" />
             </div>
             <div className="list-main">
-              <div className="list-title">Repayment schedule</div>
-              <div className="list-sub">All installments — paid &amp; upcoming</div>
-            </div>
-          </Link>
-          <Link
-            href={`/my-loan/approved/${loan.id}/history`}
-            className="list-row"
-          >
-            <div
-              className="list-icon"
-              style={{
-                background: "rgba(0,196,140,.12)",
-                color: "var(--accent)",
-              }}
-            >
-              <ClipboardList className="h-[18px] w-[18px]" />
-            </div>
-            <div className="list-main">
-              <div className="list-title">Payment history</div>
+              <div className="list-title">Schedule &amp; history</div>
               <div className="list-sub">
-                {loan.paidMonths} payment{loan.paidMonths === 1 ? "" : "s"} · receipts
+                {loan.paidMonths} paid · {loan.totalMonths - loan.paidMonths} upcoming · receipts
               </div>
             </div>
           </Link>

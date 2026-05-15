@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { notFound, useParams } from "next/navigation";
-import { Calculator, Check, CheckCircle, Share2 } from "lucide-react";
+import { Calculator, Check, CheckCircle, PhoneCall, Share2 } from "lucide-react";
 import { NavHeader } from "@/components/ui/NavHeader";
 import { Screen, ScreenBody, StickyFooter } from "@/components/ui/Screen";
 import { Card, SectionTitle } from "@/components/ui/Card";
@@ -78,10 +78,18 @@ export default function LoanDetailPage() {
           ))}
         </Card>
 
-        <Link href="/loan/calculator" className="btn btn-secondary mt-4">
-          <Calculator className="h-[18px] w-[18px]" />
-          Simulate monthly payment
-        </Link>
+        {/* Pre-application helpers — two equal-weight secondary actions.
+            Stacked on phone width so the long button labels never wrap. */}
+        <div className="mt-4 flex flex-col gap-2">
+          <Link href="/loan/calculator" className="btn btn-secondary">
+            <Calculator className="h-[18px] w-[18px]" />
+            Simulate monthly payment
+          </Link>
+          <Link href="/loan/consultation" className="btn btn-secondary">
+            <PhoneCall className="h-[18px] w-[18px]" />
+            Request a consultant
+          </Link>
+        </div>
       </ScreenBody>
       <StickyFooter>
         <Link href={`/loan/products/${product.id}/request`} className="btn btn-primary">
