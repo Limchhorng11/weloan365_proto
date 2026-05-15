@@ -70,6 +70,14 @@ export interface ApprovedLoan extends BaseLoan {
   totalPaid: number;
   remainingBalance: number;
   schedule: ScheduleRow[];
+  /**
+   * Number of installments past their due date but unpaid. When > 0 the
+   * Loan Detail + Repayment screens render an "Account overdue" board
+   * with the late-payment penalty summed in.
+   */
+  overdueMonths?: number;
+  /** Late-fee percentage applied to each overdue installment (e.g. 0.1 = 10%). */
+  penaltyRate?: number;
 }
 
 export interface GuarantorLoan extends BaseLoan {

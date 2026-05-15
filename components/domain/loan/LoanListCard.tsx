@@ -55,18 +55,31 @@ export function LoanListCard({
           <DynamicIcon name={loan.icon} className="h-[22px] w-[22px]" />
         </div>
         <div className="min-w-0 flex-1">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-2">
             <div className="truncate font-medium">{loan.productName}</div>
-            <Badge tone={tone[loan.status]}>{loan.status}</Badge>
+            {kind === "approved" &&
+            (loan as ApprovedLoan).overdueMonths &&
+            ((loan as ApprovedLoan).overdueMonths ?? 0) > 0 ? (
+              <Badge tone="danger">
+                {(loan as ApprovedLoan).overdueMonths} overdue
+              </Badge>
+            ) : (
+              <Badge tone={tone[loan.status]}>{loan.status}</Badge>
+            )}
           </div>
           <div className="mt-1 flex justify-between text-sm" style={{ color: "var(--text-2)" }}>
             <span>{formatMoney(loan.amount)}</span>
             {kind === "progressing" && (
               <span>{(loan as ProgressingLoan).requestedAt}</span>
             )}
-            {kind === "approved" && (
-              <span>Next · {(loan as ApprovedLoan).nextPaymentDate}</span>
-            )}
+            {kind === "approved" &&
+              (((loan as ApprovedLoan).overdueMonths ?? 0) > 0 ? (
+                <span style={{ color: "var(--danger)" }}>
+                  Since {(loan as ApprovedLoan).nextPaymentDate}
+                </span>
+              ) : (
+                <span>Next · {(loan as ApprovedLoan).nextPaymentDate}</span>
+              ))}
             {kind === "guarantor" && (
               <span>For {(loan as GuarantorLoan).borrowerName}</span>
             )}

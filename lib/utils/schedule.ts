@@ -1,12 +1,20 @@
 import type { ScheduleRow } from "@/lib/types";
 
-/** Build a mock amortization schedule for the prototype. */
+/**
+ * Build a mock amortization schedule.
+ *
+ *   paidMonths      installments already paid (status = "paid")
+ *   overdueMonths   installments past due date but unpaid (status = "overdue")
+ *   then 1          installment is the current "due"
+ *   remainder       installments are "pending"
+ */
 export function buildSchedule(
   totalMonths: number,
   paidMonths: number,
   monthlyAmount: number,
   currentYear: number,
   currentMonth: number,
+  overdueMonths: number = 0,
 ): ScheduleRow[] {
   const schedule: ScheduleRow[] = [];
   const months = [
@@ -14,12 +22,19 @@ export function buildSchedule(
     "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
   ];
   const startYear = currentYear;
-  const startMonth = currentMonth - paidMonths;
+  // Shift start so paid + overdue installments are in the past relative to now.
+  const startMonth = currentMonth - paidMonths - overdueMonths;
+
   for (let i = 0; i < totalMonths; i++) {
     const y = startYear + Math.floor((startMonth - 1 + i) / 12);
     const m = (((startMonth - 1 + i) % 12) + 12) % 12;
-    const status: ScheduleRow["status"] =
-      i < paidMonths ? "paid" : i === paidMonths ? "due" : "pending";
+
+    let status: ScheduleRow["status"];
+    if (i < paidMonths) status = "paid";
+    else if (i < paidMonths + overdueMonths) status = "overdue";
+    else if (i === paidMonths + overdueMonths) status = "due";
+    else status = "pending";
+
     schedule.push({
       no: i + 1,
       date: `${months[m]} ${String((i % 28) + 1).padStart(2, "0")}, ${y}`,

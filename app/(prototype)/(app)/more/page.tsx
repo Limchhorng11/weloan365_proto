@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  BadgeCheck,
   BookOpen,
   Calculator,
   FileBarChart,
@@ -45,6 +46,14 @@ export default function MorePage() {
           <ListRow icon={User} title="User Profile" sub="Update your personal info" href="/more/profile" />
           <ListRow icon={Shield} title="Account Security" sub="Face ID, Touch ID, PIN" href="/more/security" />
           <ListRow icon={Bell} title="Notifications" sub="Payment reminders, news" href="/more/notifications" />
+          <ListRow
+            icon={BadgeCheck}
+            iconBg="rgba(0,196,140,.12)"
+            iconColor="var(--accent)"
+            title="Referral history"
+            sub="Your advisor & past referral codes"
+            href="/more/referrals"
+          />
         </ListGroup>
 
         <SectionTitle>Insights &amp; Tools</SectionTitle>

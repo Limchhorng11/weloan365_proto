@@ -6,11 +6,12 @@ import { Check } from "lucide-react";
 import { Screen, ScreenBody, StickyFooter } from "@/components/ui/Screen";
 import { Card } from "@/components/ui/Card";
 
-type Lang = "en" | "km";
+type Lang = "km" | "en" | "ko";
 
 const langs: { value: Lang; label: string; native: string; flag: string }[] = [
-  { value: "en", label: "English", native: "English", flag: "🇬🇧" },
-  { value: "km", label: "Khmer", native: "ខ្មែរ", flag: "🇰🇭" },
+  { value: "km", label: "Khmer",   native: "ភាសាខ្មែរ", flag: "🇰🇭" },
+  { value: "en", label: "English", native: "English",     flag: "🇬🇧" },
+  { value: "ko", label: "Korean",  native: "한국어",      flag: "🇰🇷" },
 ];
 
 /**
@@ -24,7 +25,7 @@ const langs: { value: Lang; label: string; native: string; flag: string }[] = [
  * sign-up. There is no "Sign In" button on this screen.
  */
 export default function WelcomePage() {
-  const [lang, setLang] = useState<Lang>("en");
+  const [lang, setLang] = useState<Lang>("km");
 
   return (
     <Screen>
@@ -108,8 +109,8 @@ export default function WelcomePage() {
             className="text-xs leading-relaxed"
             style={{ color: "var(--text-2)" }}
           >
-            🇰🇭 ភាសាខ្មែរ will be available at launch. The prototype is in English
-            for the workshops.
+            🇰🇭 ភាសាខ្មែរ and 🇰🇷 한국어 will be available at launch. The
+            prototype itself is in English for the workshops.
           </p>
         </Card>
       </ScreenBody>

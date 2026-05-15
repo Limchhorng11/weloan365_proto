@@ -78,6 +78,30 @@ export const approvedLoans: ApprovedLoan[] = [
     color: "linear-gradient(135deg,#ff6b9d,#c2185b)",
     schedule: buildSchedule(36, 15, 240, 2026, 5),
   },
+  /**
+   * Demo OVERDUE loan — borrower missed the last 4 monthly payments.
+   * Used to demonstrate the "Account overdue" board (Repayment screen)
+   * with a 10% late-fee penalty applied to each overdue installment.
+   */
+  {
+    id: "l7",
+    productName: "Home Improvement Loan",
+    amount: 4000,
+    status: "Active",
+    approvedAt: "2025-08-01",
+    term: 24,
+    paidMonths: 3,
+    totalMonths: 24,
+    nextPayment: 195,
+    nextPaymentDate: "2026-02-15", // earliest overdue date
+    totalPaid: 585,
+    remainingBalance: 4095,
+    icon: "home",
+    color: "linear-gradient(135deg,#ff4d5e,#c2185b)",
+    overdueMonths: 4,
+    penaltyRate: 0.1,
+    schedule: buildSchedule(24, 3, 195, 2026, 5, 4),
+  },
 ];
 
 export const guarantorLoans: GuarantorLoan[] = [

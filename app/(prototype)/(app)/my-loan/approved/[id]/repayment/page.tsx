@@ -2,7 +2,14 @@
 
 import { notFound, useParams } from "next/navigation";
 import { Fragment, useMemo, useState } from "react";
-import { Check, Download } from "lucide-react";
+import {
+  AlertTriangle,
+  ArrowRight,
+  Calendar,
+  Check,
+  Download,
+  MessageCircle,
+} from "lucide-react";
 import { NavHeader } from "@/components/ui/NavHeader";
 import { Screen, ScreenBody } from "@/components/ui/Screen";
 import { Card } from "@/components/ui/Card";
@@ -68,7 +75,24 @@ export default function RepaymentSchedulePage() {
 
   const paid = loan.schedule.filter((r) => r.status === "paid");
   const upcoming = loan.schedule.filter((r) => r.status !== "paid");
+  const overdue = loan.schedule.filter((r) => r.status === "overdue");
   const totalPaid = paid.reduce((sum, r) => sum + Number(r.amount), 0);
+
+  // Overdue totals (only meaningful when overdue.length > 0)
+  const overduePrincipal = overdue.reduce(
+    (s, r) => s + Number(r.principal),
+    0,
+  );
+  const overdueInterest = overdue.reduce(
+    (s, r) => s + Number(r.interest),
+    0,
+  );
+  const overdueAmount = overduePrincipal + overdueInterest;
+  const penaltyRate = loan.penaltyRate ?? 0.1;
+  const penaltyTotal = overdueAmount * penaltyRate;
+  const overdueGrandTotal = overdueAmount + penaltyTotal;
+  const firstOverdueDate = overdue[0]?.date;
+  const lastOverdueDate = overdue[overdue.length - 1]?.date;
 
   const visible: ScheduleRowType[] =
     filter === "paid"
@@ -109,6 +133,157 @@ export default function RepaymentSchedulePage() {
         }
       />
       <ScreenBody noPad>
+        {/* Overdue Board — only when at least one installment is overdue */}
+        {overdue.length > 0 && (
+          <div className="p-4 pb-0">
+            <div
+              className="overflow-hidden rounded-2xl p-4"
+              style={{
+                background:
+                  "linear-gradient(135deg, rgba(255,77,94,.10), rgba(255,77,94,.04))",
+                border: "1.5px solid rgba(255,77,94,.3)",
+              }}
+            >
+              <div className="flex items-start gap-3">
+                <div
+                  className="grid h-11 w-11 flex-shrink-0 place-items-center rounded-xl"
+                  style={{
+                    background: "rgba(255,77,94,.15)",
+                    color: "var(--danger)",
+                  }}
+                >
+                  <AlertTriangle className="h-5 w-5" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div
+                    className="text-[11px] font-bold uppercase tracking-wider"
+                    style={{ color: "var(--danger)" }}
+                  >
+                    Account overdue
+                  </div>
+                  <div className="mt-0.5 text-[15px] font-semibold leading-tight">
+                    {overdue.length} missed payment
+                    {overdue.length === 1 ? "" : "s"}
+                  </div>
+                  <div
+                    className="mt-0.5 text-[12px]"
+                    style={{ color: "var(--text-2)" }}
+                  >
+                    Since {firstOverdueDate} · last missed {lastOverdueDate}
+                  </div>
+                </div>
+              </div>
+
+              {/* Breakdown */}
+              <div
+                className="mt-3 rounded-xl p-3"
+                style={{ background: "var(--surface)" }}
+              >
+                <div className="kv-row">
+                  <span>Overdue principal</span>
+                  <span>{formatMoney(overduePrincipal)}</span>
+                </div>
+                <div className="kv-row">
+                  <span>Overdue interest</span>
+                  <span>{formatMoney(overdueInterest)}</span>
+                </div>
+                <div className="kv-row">
+                  <span>
+                    Late penalty ({Math.round(penaltyRate * 100)}%)
+                  </span>
+                  <span style={{ color: "var(--danger)" }}>
+                    + {formatMoney(penaltyTotal)}
+                  </span>
+                </div>
+                <div
+                  className="mt-2 flex items-center justify-between border-t pt-2"
+                  style={{ borderColor: "var(--border)" }}
+                >
+                  <span className="text-[12px] font-bold uppercase tracking-wider">
+                    Total to settle
+                  </span>
+                  <span
+                    className="text-[20px] font-bold"
+                    style={{ color: "var(--danger)" }}
+                  >
+                    {formatMoney(overdueGrandTotal)}
+                  </span>
+                </div>
+              </div>
+
+              {/* Primary action — 2-line gradient pill, matches the alert
+                  on the Loan Detail page. */}
+              <button
+                type="button"
+                onClick={() =>
+                  open(
+                    <PaymentSheet
+                      dueAmount={overdueGrandTotal}
+                      dueDate={`${overdue.length} months overdue`}
+                    />,
+                  )
+                }
+                className="mt-3 flex w-full items-center justify-between gap-3 rounded-2xl px-5 py-3.5 text-left text-white transition active:scale-[.98]"
+                style={{
+                  background: "linear-gradient(135deg, #ff4d5e, #c2185b)",
+                  boxShadow: "0 8px 20px rgba(255,77,94,.28)",
+                }}
+              >
+                <div className="min-w-0">
+                  <div className="text-[10px] font-bold uppercase tracking-wider opacity-90">
+                    Pay all overdue now
+                  </div>
+                  <div className="mt-0.5 text-[22px] font-extrabold leading-none">
+                    {formatMoney(overdueGrandTotal)}
+                  </div>
+                </div>
+                <ArrowRight className="h-5 w-5 flex-shrink-0" />
+              </button>
+
+              {/* Secondary actions */}
+              <div className="mt-2 grid grid-cols-2 gap-2">
+                <button
+                  onClick={() =>
+                    toast("Restructure request sent — officer will contact you", "info")
+                  }
+                  className="flex items-center justify-center gap-1.5 rounded-xl py-2 text-[12px] font-semibold"
+                  style={{
+                    background: "var(--surface)",
+                    color: "var(--text)",
+                    border: "1px solid var(--border)",
+                  }}
+                >
+                  <Calendar className="h-3.5 w-3.5" />
+                  Restructure
+                </button>
+                <button
+                  onClick={() =>
+                    toast("Connecting to your loan officer", "info")
+                  }
+                  className="flex items-center justify-center gap-1.5 rounded-xl py-2 text-[12px] font-semibold"
+                  style={{
+                    background: "var(--surface)",
+                    color: "var(--text)",
+                    border: "1px solid var(--border)",
+                  }}
+                >
+                  <MessageCircle className="h-3.5 w-3.5" />
+                  Talk to officer
+                </button>
+              </div>
+
+              <p
+                className="mt-3 text-[11px] leading-relaxed"
+                style={{ color: "var(--text-3)" }}
+              >
+                Continued non-payment may affect your credit score and lead to
+                legal action. We&apos;re here to help — talk to a loan officer
+                to find a workable plan.
+              </p>
+            </div>
+          </div>
+        )}
+
         {/* Summary card */}
         <div className="p-4 pb-0">
           <Card>

@@ -12,6 +12,7 @@ import { StaffConfirmSheet } from "@/components/sheets/StaffConfirmSheet";
 import { useSheet } from "@/lib/hooks/useSheet";
 import { useToast } from "@/lib/hooks/useToast";
 import { useAuthStore } from "@/stores/auth";
+import { useAdvisorStore } from "@/stores/advisor";
 import { getStaffByCode, staff } from "@/lib/mock";
 
 /**
@@ -29,6 +30,8 @@ export default function ReferralPage() {
   const { open, close } = useSheet();
   const toast = useToast();
   const signIn = useAuthStore((s) => s.signIn);
+  const setAdvisor = useAdvisorStore((s) => s.set);
+  const clearAdvisor = useAdvisorStore((s) => s.clear);
 
   const [code, setCode] = useState("");
   const [error, setError] = useState(false);
@@ -43,6 +46,10 @@ export default function ReferralPage() {
           staff={match}
           onConfirm={() => {
             close();
+            // Lock in the advisor — this is the customer's ONE person in
+            // charge from now on. Future loan applications will pre-fill
+            // this value read-only.
+            setAdvisor(match.code, "signup");
             toast(`Linked to ${match.name} (${match.roleShort})`, "success");
             signIn();
             router.replace("/home");
@@ -62,9 +69,12 @@ export default function ReferralPage() {
       }, 700);
       return () => window.clearTimeout(t);
     }
-  }, [code, open, close, router, signIn, toast]);
+  }, [code, open, close, router, signIn, toast, setAdvisor]);
 
   const skip = () => {
+    // Skipping means no advisor is linked at sign-up. Clear any stale value
+    // so the loan request screen knows it can prompt for one later.
+    clearAdvisor();
     toast("Welcome to Weloan365!", "success");
     signIn();
     router.replace("/home");
