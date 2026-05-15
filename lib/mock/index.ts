@@ -20,3 +20,4 @@ export {
 } from "./misc";
 export { promos, getPromoById, type Promo } from "./promos";
 export { newsItems, getNewsById } from "./news";
+export { staff, getStaffByCode, type Staff } from "./staff";

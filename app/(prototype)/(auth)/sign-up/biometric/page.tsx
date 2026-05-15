@@ -9,30 +9,27 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { BiometricModal } from "@/components/sheets/BiometricModal";
 import { useToast } from "@/lib/hooks/useToast";
-import { useAuthStore } from "@/stores/auth";
 
 /**
  * Biometric Setup (Workshop ref: Session 1.F1, screen 7).
- * Last step of sign-up — user enables Face ID / Touch ID, then lands on Home.
+ * Penultimate step of sign-up — user enables Face ID / Touch ID, then
+ * continues to the Referral Code step (which finalises sign-in and lands
+ * the user on Home).
  */
 export default function BiometricSetupPage() {
   const router = useRouter();
   const toast = useToast();
-  const signIn = useAuthStore((s) => s.signIn);
   const [showModal, setShowModal] = useState(false);
 
-  const finish = (msg: string) => {
-    toast(msg, "success");
-    signIn();
-    router.replace("/home");
-  };
+  const goNext = () => router.push("/sign-up/referral");
 
   const onEnable = () => setShowModal(true);
   const onSuccess = () => {
     setShowModal(false);
-    finish("Face ID enabled. Welcome to Weloan365!");
+    toast("Face ID enabled.", "success");
+    goNext();
   };
-  const onSkip = () => finish("Welcome to Weloan365!");
+  const onSkip = () => goNext();
 
   return (
     <Screen>

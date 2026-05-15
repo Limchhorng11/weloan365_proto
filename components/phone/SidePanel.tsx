@@ -20,6 +20,7 @@ const QUICK_LINK_GROUPS: { title: string; links: QuickLink[] }[] = [
       { label: "Sign In — PIN entry", href: "/sign-in/pin", flowRef: "1.F2" },
       { label: "Sign Up — Phone", href: "/sign-up/phone", flowRef: "1.F1" },
       { label: "Sign Up — Biometric", href: "/sign-up/biometric", flowRef: "1.F1" },
+      { label: "Sign Up — Referral code", href: "/sign-up/referral", flowRef: "1.F1" },
       { label: "Forgot PIN — Recovery", href: "/forgot-pin/phone", flowRef: "1.F3" },
     ],
   },
