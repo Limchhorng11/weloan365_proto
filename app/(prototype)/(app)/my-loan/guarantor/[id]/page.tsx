@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { notFound, useParams } from "next/navigation";
 import { useState } from "react";
-import { Calendar, Check, FileSignature, Info, X } from "lucide-react";
+import { Calendar, Check, Info, X } from "lucide-react";
 import { NavHeader } from "@/components/ui/NavHeader";
 import { Screen, ScreenBody, StickyFooter } from "@/components/ui/Screen";
 import { Card, SectionTitle } from "@/components/ui/Card";
@@ -19,7 +19,7 @@ type Decision = "pending" | "accepted" | "declined";
 
 /**
  * Guarantor Review (Workshop ref: Session 3.F3).
- * Read-only loan preview with Accept (e-sign) / Decline (reason) actions.
+ * Read-only loan preview with Accept / Decline (reason) actions.
  */
 export default function GuarantorDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -31,41 +31,8 @@ export default function GuarantorDetailPage() {
   const [decision, setDecision] = useState<Decision>("pending");
 
   const onAccept = () => {
-    open(
-      <>
-        <h3 className="mb-1 text-[17px] font-semibold">Accept &amp; sign</h3>
-        <p className="mb-4 text-[13px]" style={{ color: "var(--text-2)" }}>
-          By signing below, you agree to be a guarantor for this loan. If the
-          borrower fails to repay, you are legally responsible.
-        </p>
-
-        <button
-          onClick={() => {
-            close();
-            setDecision("accepted");
-            toast("Guarantor agreement signed", "success");
-          }}
-          className="flex w-full items-center gap-3 rounded-2xl border-2 border-dashed p-5 text-left"
-          style={{ borderColor: "var(--primary)" }}
-        >
-          <FileSignature
-            className="h-6 w-6 flex-shrink-0"
-            style={{ color: "var(--primary)" }}
-          />
-          <div>
-            <div className="text-sm font-semibold">Tap to sign</div>
-            <div className="text-xs" style={{ color: "var(--text-2)" }}>
-              Use your finger to draw your signature
-            </div>
-          </div>
-        </button>
-
-        <p className="mt-4 text-xs leading-relaxed" style={{ color: "var(--text-3)" }}>
-          Your decision is logged with a timestamp and cannot be reversed once
-          signed. The borrower and loan officer will be notified.
-        </p>
-      </>,
-    );
+    setDecision("accepted");
+    toast("Guarantee accepted", "success");
   };
 
   const onDecline = () => {
@@ -151,7 +118,7 @@ export default function GuarantorDetailPage() {
               className="mt-2 px-6 text-sm"
               style={{ color: "var(--text-2)" }}
             >
-              Your e-signature has been recorded. The borrower and loan officer
+              Your decision has been logged. The borrower and loan officer
               will be notified.
             </p>
           </div>
@@ -166,7 +133,7 @@ export default function GuarantorDetailPage() {
               <span>{formatMoney(loan.amount)}</span>
             </div>
             <div className="kv-row">
-              <span>Signed at</span>
+              <span>Accepted at</span>
               <span>{new Date().toLocaleString()}</span>
             </div>
           </Card>
@@ -286,12 +253,7 @@ export default function GuarantorDetailPage() {
       </ScreenBody>
       <StickyFooter>
         <div className="flex flex-col gap-2">
-          <Button
-            onClick={onAccept}
-            leading={<FileSignature className="h-[18px] w-[18px]" />}
-          >
-            Accept &amp; e-sign
-          </Button>
+          <Button onClick={onAccept}>Accept</Button>
           <Button variant="outline" onClick={onDecline}>
             Decline
           </Button>

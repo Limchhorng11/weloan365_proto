@@ -1,6 +1,13 @@
 "use client";
 
-import { ChevronRight, FileSignature, ShieldCheck, Upload } from "lucide-react";
+import {
+  BadgeCheck,
+  ChevronRight,
+  FileSignature,
+  ShieldCheck,
+  Upload,
+  XCircle,
+} from "lucide-react";
 import { notFound, useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { NavHeader } from "@/components/ui/NavHeader";
@@ -8,11 +15,12 @@ import { Screen, ScreenBody, StickyFooter } from "@/components/ui/Screen";
 import { Card, SectionTitle } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Input, Textarea } from "@/components/ui/Input";
+import { Avatar } from "@/components/ui/Avatar";
 import { DynamicIcon } from "@/components/domain/loan/DynamicIcon";
 import { SuccessSheet } from "@/components/sheets/SuccessSheet";
 import { useSheet } from "@/lib/hooks/useSheet";
 import { useToast } from "@/lib/hooks/useToast";
-import { getProductById, mockUser } from "@/lib/mock";
+import { getProductById, getStaffByCode, mockUser } from "@/lib/mock";
 import { formatMoney } from "@/lib/utils/format";
 import { calculateEmi } from "@/lib/utils/emi";
 
@@ -42,6 +50,13 @@ export default function LoanRequestPage() {
   const [docPay, setDocPay] = useState(false);
   const [cbcConsent, setCbcConsent] = useState(false);
   const [signed, setSigned] = useState(false);
+  const [referralCode, setReferralCode] = useState("");
+
+  // Resolve the 5-digit referral code → staff member. Invalid 5-digit codes
+  // are shown as an error; empty / partial codes are silent (optional field).
+  const referralStaff =
+    referralCode.length === 5 ? getStaffByCode(referralCode) : undefined;
+  const referralInvalid = referralCode.length === 5 && !referralStaff;
 
   const next = () => setStep((s) => (s < 4 ? ((s + 1) as Step) : s));
   const prev = () => setStep((s) => (s > 0 ? ((s - 1) as Step) : s));
@@ -54,7 +69,8 @@ export default function LoanRequestPage() {
         term >= product.minTerm &&
         term <= product.maxTerm
       );
-    if (step === 1) return income > 0 && employer.length > 0;
+    if (step === 1)
+      return income > 0 && employer.length > 0 && !referralInvalid;
     if (step === 2) return docId && docPay;
     if (step === 3) return cbcConsent && signed;
     return true;
@@ -200,6 +216,88 @@ export default function LoanRequestPage() {
                 rows={2}
                 defaultValue="#12, St. 271, Phnom Penh"
               />
+
+              {/* Referral code — optional 5-digit code from a Weloan365 staff
+                  member. Resolves to the staff name as the customer types. */}
+              <div>
+                <Input
+                  label="Referral code (5 digits, optional)"
+                  type="tel"
+                  inputMode="numeric"
+                  maxLength={5}
+                  placeholder="• • • • •"
+                  value={referralCode}
+                  onChange={(e) =>
+                    setReferralCode(
+                      e.target.value.replace(/\D/g, "").slice(0, 5),
+                    )
+                  }
+                  className="font-mono tracking-[0.4em]"
+                />
+
+                {/* Valid → staff confirmation chip */}
+                {referralStaff && (
+                  <div
+                    className="mt-2 flex items-center gap-2.5 rounded-xl p-2.5"
+                    style={{
+                      background: "rgba(0,196,140,.08)",
+                      border: "1px solid rgba(0,196,140,.25)",
+                    }}
+                  >
+                    <Avatar
+                      size="sm"
+                      initials={referralStaff.initials}
+                      bg={referralStaff.color}
+                    />
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-1 text-[12px] font-semibold">
+                        <BadgeCheck
+                          className="h-3.5 w-3.5"
+                          style={{ color: "var(--accent)" }}
+                        />
+                        {referralStaff.name}
+                      </div>
+                      <div
+                        className="text-[11px]"
+                        style={{ color: "var(--text-2)" }}
+                      >
+                        {referralStaff.role} ({referralStaff.roleShort}) ·{" "}
+                        {referralStaff.branchName}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Invalid 5-digit → error message */}
+                {referralInvalid && (
+                  <div
+                    className="mt-2 flex items-center gap-2 rounded-xl p-2.5 text-[12px]"
+                    style={{
+                      background: "rgba(255,77,94,.08)",
+                      border: "1px solid rgba(255,77,94,.25)",
+                      color: "var(--danger)",
+                    }}
+                  >
+                    <XCircle className="h-4 w-4 flex-shrink-0" />
+                    <span>
+                      We don&apos;t recognise that code. Check with your
+                      advisor, or leave it blank.
+                    </span>
+                  </div>
+                )}
+
+                {/* Helper hint when empty */}
+                {!referralCode && (
+                  <p
+                    className="mt-1.5 text-[11px] leading-relaxed"
+                    style={{ color: "var(--text-3)" }}
+                  >
+                    If a Weloan365 Credit Officer or branch staff referred
+                    you, enter the 5-digit code they gave you. Skip if you
+                    don&apos;t have one.
+                  </p>
+                )}
+              </div>
             </div>
           </>
         )}
@@ -417,6 +515,21 @@ export default function LoanRequestPage() {
               <div className="kv-row">
                 <span>Employer</span>
                 <span>{employer || "—"}</span>
+              </div>
+              <div className="kv-row">
+                <span>Referred by</span>
+                <span>
+                  {referralStaff ? (
+                    <>
+                      {referralStaff.name}{" "}
+                      <span style={{ color: "var(--text-3)" }}>
+                        ({referralStaff.roleShort} · {referralCode})
+                      </span>
+                    </>
+                  ) : (
+                    "—"
+                  )}
+                </span>
               </div>
             </Card>
 

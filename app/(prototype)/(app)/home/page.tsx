@@ -8,6 +8,13 @@ import { PromoCarousel } from "@/components/domain/home/PromoCarousel";
 import { NewsSection } from "@/components/domain/home/NewsSection";
 import { ProductCard } from "@/components/domain/loan/ProductCard";
 import { mockUser, loanProducts } from "@/lib/mock";
+import { useCurrencyStore, type Currency } from "@/stores/currency";
+import { formatCurrency } from "@/lib/utils/currency";
+
+// Outstanding figures are stored in USD; rendering switches via the
+// currency toggle below.
+const OUTSTANDING_USD = 7290;
+const NEXT_PAYMENT_USD = 162.5;
 
 /**
  * Home screen.
@@ -18,6 +25,9 @@ import { mockUser, loanProducts } from "@/lib/mock";
  * the negative margin and the overlap effect would disappear.
  */
 export default function HomePage() {
+  const currency = useCurrencyStore((s) => s.currency);
+  const setCurrency = useCurrencyStore((s) => s.set);
+
   return (
     <div className="h-full overflow-y-auto pb-24 animate-fade-in">
       <div
@@ -56,21 +66,50 @@ export default function HomePage() {
           className="mt-4 block rounded-2xl p-4 backdrop-blur transition active:scale-[.99]"
           style={{ background: "rgba(255,255,255,.15)" }}
         >
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-2">
             <span className="text-[11px] uppercase tracking-wider opacity-80">
               Total Outstanding
             </span>
-            <span
-              className="rounded-md px-1.5 py-0.5 text-[10px] font-semibold"
+            {/* Currency toggle — sits inside the Link but its clicks are
+                stopped so they don't navigate. */}
+            <div
+              className="flex items-center rounded-full p-0.5 text-[10px] font-semibold"
               style={{ background: "rgba(255,255,255,.2)" }}
             >
-              View loans →
-            </span>
+              {(["USD", "KHR"] as const).map((c) => {
+                const active = c === currency;
+                return (
+                  <button
+                    key={c}
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setCurrency(c as Currency);
+                    }}
+                    aria-pressed={active}
+                    aria-label={`Show amounts in ${c}`}
+                    className="rounded-full px-2.5 py-1 transition"
+                    style={{
+                      background: active ? "#fff" : "transparent",
+                      color: active ? "var(--primary)" : "#fff",
+                      boxShadow: active
+                        ? "0 1px 3px rgba(0,0,0,.15)"
+                        : undefined,
+                    }}
+                  >
+                    {c === "USD" ? "$ USD" : "៛ KHR"}
+                  </button>
+                );
+              })}
+            </div>
           </div>
-          <div className="mt-1 text-[28px] font-bold">$7,290.00</div>
+          <div className="mt-1 text-[28px] font-bold">
+            {formatCurrency(OUTSTANDING_USD, currency)}
+          </div>
           <div className="mt-3 flex justify-between text-xs opacity-90">
             <span>Next payment · May 15</span>
-            <span>$162.50</span>
+            <span>{formatCurrency(NEXT_PAYMENT_USD, currency)}</span>
           </div>
         </Link>
       </div>
