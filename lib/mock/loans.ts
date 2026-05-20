@@ -9,7 +9,7 @@ import { buildSchedule } from "@/lib/utils/schedule";
 export const progressingLoans: ProgressingLoan[] = [
   {
     id: "l1",
-    productName: "Quick Personal Loan",
+    productName: "Micro Loan (ML)",
     amount: 2000,
     status: "Under Review",
     requestedAt: "2026-04-18",
@@ -26,7 +26,7 @@ export const progressingLoans: ProgressingLoan[] = [
   },
   {
     id: "l2",
-    productName: "Business Capital Loan",
+    productName: "Small Business Loan (SBL)",
     amount: 15000,
     status: "Document Needed",
     requestedAt: "2026-04-20",
@@ -46,7 +46,7 @@ export const progressingLoans: ProgressingLoan[] = [
 export const approvedLoans: ApprovedLoan[] = [
   {
     id: "l3",
-    productName: "Motorbike Loan",
+    productName: "Small & Medium Enterprise (SME)",
     amount: 3000,
     status: "Active",
     approvedAt: "2025-10-15",
@@ -57,13 +57,13 @@ export const approvedLoans: ApprovedLoan[] = [
     nextPaymentDate: "2026-05-15",
     totalPaid: 975,
     remainingBalance: 2250,
-    icon: "bike",
+    icon: "building-2",
     color: "linear-gradient(135deg,#ff9f1c,#cc7a00)",
     schedule: buildSchedule(24, 6, 162.5, 2026, 5),
   },
   {
     id: "l4",
-    productName: "Education Loan",
+    productName: "Housing Loan (HL)",
     amount: 8000,
     status: "Active",
     approvedAt: "2025-01-10",
@@ -85,7 +85,7 @@ export const approvedLoans: ApprovedLoan[] = [
    */
   {
     id: "l7",
-    productName: "Home Improvement Loan",
+    productName: "Migrant Worker Loan (MWL)",
     amount: 4000,
     status: "Active",
     approvedAt: "2025-08-01",
@@ -96,7 +96,7 @@ export const approvedLoans: ApprovedLoan[] = [
     nextPaymentDate: "2026-02-15", // earliest overdue date
     totalPaid: 585,
     remainingBalance: 4095,
-    icon: "home",
+    icon: "plane",
     color: "linear-gradient(135deg,#ff4d5e,#c2185b)",
     overdueMonths: 4,
     penaltyRate: 0.1,
@@ -122,13 +122,13 @@ export const guarantorLoans: GuarantorLoan[] = [
 ];
 
 export const rejectedLoans: RejectedLoan[] = [
-  // All three May rejections are for **Quick Personal Loan (p1)** — that's
+  // All three May rejections are for **Micro Loan (p1)** — that's
   // the one product that crosses the 3-per-month cap and gets locked. The
   // other 4 products in the catalog remain applicable.
   {
     id: "l10",
     productId: "p1",
-    productName: "Quick Personal Loan",
+    productName: "Micro Loan (ML)",
     amount: 2500,
     status: "Rejected",
     rejectedAt: "2026-05-13",
@@ -145,7 +145,7 @@ export const rejectedLoans: RejectedLoan[] = [
   {
     id: "l9",
     productId: "p1",
-    productName: "Quick Personal Loan",
+    productName: "Micro Loan (ML)",
     amount: 3000,
     status: "Rejected",
     rejectedAt: "2026-05-08",
@@ -160,7 +160,7 @@ export const rejectedLoans: RejectedLoan[] = [
   {
     id: "l8",
     productId: "p1",
-    productName: "Quick Personal Loan",
+    productName: "Micro Loan (ML)",
     amount: 2000,
     status: "Rejected",
     rejectedAt: "2026-05-02",
@@ -177,7 +177,7 @@ export const rejectedLoans: RejectedLoan[] = [
   {
     id: "l6",
     productId: "p2",
-    productName: "Business Capital Loan",
+    productName: "Small Business Loan (SBL)",
     amount: 30000,
     status: "Rejected",
     rejectedAt: "2025-08-22",

@@ -40,7 +40,7 @@ const FAQS: Faq[] = [
     category: "loans",
     question: "What documents will I need?",
     answer:
-      "At minimum: a valid National ID (or Passport / Driving Licence) and a recent payslip or income proof. Some products require additional documents — for example, Business Capital Loan asks for business registration, and Education Loan asks for an enrollment letter. The list is shown in the application wizard's Documents step.",
+      "At minimum: a valid National ID (or Passport / Driving Licence) and a recent payslip or income proof. Some products require additional documents — for example, SBL & SME ask for business registration and recent sales records, Housing Loan asks for proof of property ownership, and Migrant Worker Loan asks for a signed overseas employment contract. The list is shown in the application wizard's Documents step.",
   },
   {
     id: "f3",
