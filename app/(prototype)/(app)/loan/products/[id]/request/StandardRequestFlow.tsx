@@ -117,28 +117,10 @@ export function StandardRequestFlow({ product }: { product: LoanProduct }) {
   const next = () => setStep((s) => (s < 2 ? ((s + 1) as Step) : s));
   const prev = () => setStep((s) => (s > 0 ? ((s - 1) as Step) : s));
 
-  const canAdvance = (() => {
-    if (step === 0) {
-      return (
-        amount >= product.minAmount &&
-        amount <= product.maxAmount &&
-        term >= product.minTerm &&
-        term <= product.maxTerm &&
-        purpose.trim().length > 0 &&
-        income > 0 &&
-        employer.trim().length > 0 &&
-        branchId !== "" &&
-        idNumber.trim().length >= 5 &&
-        idExpiry !== "" &&
-        dob !== "" &&
-        !referralInvalid
-      );
-    }
-    if (step === 1) {
-      return docNid && docIncome && (!collateralRequired || docCollateral);
-    }
-    return acknowledge;
-  })();
+  // Prototype: gates are intentionally relaxed so demo users can walk
+  // through every screen without being blocked by empty fields. Real
+  // validation lives on the back-office side after submit.
+  const canAdvance = true;
 
   const onSubmit = () => {
     open(

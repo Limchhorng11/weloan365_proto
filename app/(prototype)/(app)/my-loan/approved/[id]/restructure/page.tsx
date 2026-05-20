@@ -130,7 +130,8 @@ export default function RestructurePage() {
     };
   })();
 
-  const canSubmit = reason !== null && acknowledge;
+  // Prototype: always allow submit so demo users can walk the full flow.
+  const canSubmit = true;
 
   const onSubmit = () => {
     open(

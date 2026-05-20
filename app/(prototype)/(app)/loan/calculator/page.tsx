@@ -50,13 +50,29 @@ export default function LoanCalculatorPage() {
   const total = method === "flat" ? flatTotal : declining.total;
   const interest = method === "flat" ? flatInterestPerMonth * term : declining.interest;
 
+  // Deterministic preview dates — anchored to today + N months so the
+  // calculator shows realistic upcoming dates in the Due Date column.
+  const previewStart = new Date();
+  const fmtPreviewDate = (i: number) => {
+    const d = new Date(previewStart);
+    d.setMonth(d.getMonth() + i + 1);
+    return d.toLocaleDateString("en-US", {
+      month: "short",
+      day: "2-digit",
+      year: "numeric",
+    });
+  };
+
   const preview = Array.from({ length: Math.min(6, term) }, (_, i) => {
+    const date = fmtPreviewDate(i);
     if (method === "flat") {
       const principalPart = amount / term;
       return {
         month: i + 1,
+        date,
         principal: principalPart,
         interest: flatInterestPerMonth,
+        fee: 0,
         pay: flatEmi,
       };
     }
@@ -65,8 +81,10 @@ export default function LoanCalculatorPage() {
     const interestPart = (amount - principalPart * i) * (rate / 100);
     return {
       month: i + 1,
+      date,
       principal: principalPart,
       interest: interestPart,
+      fee: 0,
       pay: principalPart + interestPart,
     };
   });
@@ -194,32 +212,86 @@ export default function LoanCalculatorPage() {
           </div>
         </Card>
 
-        <Card className="mt-4">
-          <h4 className="mb-2.5 text-sm font-semibold">
-            Repayment preview (first 6 months)
-          </h4>
+        <h4 className="mb-2 mt-5 text-sm font-semibold">
+          Repayment preview (first 6 months)
+        </h4>
+
+        {/* Column-layout matches the live Repayment Table on the loan
+            detail screen: Due Date · Principal · Interest · Fee/Penalty ·
+            Total. Fee/Penalty is always $0.00 on a forecast — included so
+            the columns line up with the actual table customers see later. */}
+        <div
+          className="overflow-hidden rounded-2xl shadow-sm"
+          style={{
+            background: "var(--surface)",
+            border: "1px solid var(--border)",
+          }}
+        >
+          {/* Header */}
           <div
-            className="mb-1.5 grid grid-cols-[40px_1fr_1fr_1fr] gap-2 text-[11px] uppercase tracking-wider"
-            style={{ color: "var(--text-3)" }}
+            className="grid grid-cols-[1.4fr_1fr_0.9fr_0.9fr_1.1fr] gap-1.5 px-2.5 py-2 text-[9.5px] font-bold uppercase tracking-wider"
+            style={{
+              background: "var(--surface-2)",
+              color: "var(--text-2)",
+              borderBottom: "1px solid var(--border)",
+            }}
           >
-            <span>#</span>
-            <span>Principal</span>
-            <span>Interest</span>
-            <span className="text-right">Pay</span>
+            <span>Due Date</span>
+            <span className="text-right">Principal</span>
+            <span className="text-right">Interest</span>
+            <span className="text-right">Fee/Penalty</span>
+            <span className="text-right">Total</span>
           </div>
+
+          {/* Body */}
           {preview.map((r) => (
             <div
               key={r.month}
-              className="grid grid-cols-[40px_1fr_1fr_1fr] gap-2 border-b border-dashed py-1.5 text-[13px] last:border-b-0"
+              className="relative grid grid-cols-[1.4fr_1fr_0.9fr_0.9fr_1.1fr] items-center gap-1.5 border-b px-2.5 py-2.5 text-[11.5px] last:border-b-0"
               style={{ borderColor: "var(--border)" }}
             >
-              <span style={{ color: "var(--text-2)" }}>{r.month}</span>
-              <span>{fmt(r.principal, currency)}</span>
-              <span style={{ color: "var(--text-2)" }}>{fmt(r.interest, currency)}</span>
-              <span className="text-right font-semibold">{fmt(r.pay, currency)}</span>
+              {/* Status stripe — muted gray for all forecast rows */}
+              <span
+                aria-hidden
+                className="absolute left-0 top-0 h-full w-1"
+                style={{ background: "var(--border-strong)" }}
+              />
+              <div className="min-w-0 pl-1">
+                <div
+                  className="text-[9px] font-bold"
+                  style={{ color: "var(--text-3)" }}
+                >
+                  #{r.month}
+                </div>
+                <div className="font-semibold leading-tight">{r.date}</div>
+                <div
+                  className="text-[9.5px] uppercase tracking-wider"
+                  style={{ color: "var(--text-3)" }}
+                >
+                  Forecast
+                </div>
+              </div>
+              <span className="text-right font-mono tabular-nums">
+                {fmt(r.principal, currency)}
+              </span>
+              <span
+                className="text-right font-mono tabular-nums"
+                style={{ color: "var(--text-2)" }}
+              >
+                {fmt(r.interest, currency)}
+              </span>
+              <span
+                className="text-right font-mono tabular-nums"
+                style={{ color: "var(--text-3)" }}
+              >
+                {fmt(r.fee, currency)}
+              </span>
+              <span className="text-right font-mono font-bold tabular-nums">
+                {fmt(r.pay, currency)}
+              </span>
             </div>
           ))}
-        </Card>
+        </div>
 
         <p className="mt-3 text-xs" style={{ color: "var(--text-3)" }}>
           {method === "flat"

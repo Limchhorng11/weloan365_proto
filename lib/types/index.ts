@@ -40,6 +40,14 @@ export interface ScheduleRow {
   date: string;
   principal: string;
   interest: string;
+  /**
+   * Late fee or penalty applied to this installment, as a string for
+   * display parity with principal/interest. `"0.00"` for installments
+   * that haven't accrued a fee; overdue installments carry the loan's
+   * `penaltyRate` × principal+interest.
+   */
+  fee: string;
+  /** Total amount due = principal + interest + fee. */
   amount: string;
   status: "paid" | "due" | "pending" | "overdue";
 }

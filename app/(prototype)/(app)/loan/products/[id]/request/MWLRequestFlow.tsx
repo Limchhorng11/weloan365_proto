@@ -193,55 +193,10 @@ export function MWLRequestFlow({ product }: { product: LoanProduct }) {
   const next = () => setStep((s) => (s < 8 ? ((s + 1) as Step) : s));
   const prev = () => setStep((s) => (s > 0 ? ((s - 1) as Step) : s));
 
-  const canAdvance = (() => {
-    if (step === 0) return dest !== null;
-    if (step === 1)
-      return (
-        fullName.trim().length > 1 &&
-        dob !== "" &&
-        nationality.trim().length > 0 &&
-        idNumber.trim().length >= 5 &&
-        branchId !== "" &&
-        !referralInvalid
-      );
-    if (step === 2)
-      return (
-        jobPosition.trim().length > 0 &&
-        employer.trim().length > 0 &&
-        employmentMonths >= 1 &&
-        salary > 0
-      );
-    if (step === 3)
-      return (
-        agencyName.trim().length > 0 &&
-        agencyContact.trim().length > 0 &&
-        agencyPhone.trim().length >= 6
-      );
-    if (step === 4)
-      return (
-        amount >= product.minAmount &&
-        amount <= product.maxAmount &&
-        tenure >= product.minTerm &&
-        tenure <= product.maxTerm &&
-        purpose.trim().length > 0
-      );
-    if (step === 5)
-      return (
-        bankName.trim().length > 0 &&
-        accountHolder.trim().length > 0 &&
-        accountNumber.trim().length >= 6 &&
-        bankBranch.trim().length > 0
-      );
-    if (step === 6)
-      return (
-        gName.trim().length > 1 &&
-        gPhone.trim().length >= 6 &&
-        gIdNumber.trim().length >= 5
-      );
-    if (step === 7)
-      return docId && docPassport && docContract && docVisa && docMedical;
-    return acknowledge;
-  })();
+  // Prototype: gates are intentionally relaxed so demo users can walk
+  // through every screen without being blocked by empty fields. Real
+  // validation lives on the back-office side after submit.
+  const canAdvance = true;
 
   const onSubmit = () => {
     open(
