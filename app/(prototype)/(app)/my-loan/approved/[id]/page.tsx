@@ -206,55 +206,6 @@ export default function ApprovedDetailPage() {
           </div>
         </Card>
 
-        {/* Restructure payment — visible entry point for ALL active loans.
-            Borrowers can extend the term, request a payment holiday, or
-            switch to an interest-only period. Highlighted on its own card
-            so it doesn't get buried in Quick Actions. */}
-        <Link
-          href={`/my-loan/approved/${loan.id}/restructure`}
-          className="mt-3 flex items-center gap-3 rounded-2xl p-3.5 text-left shadow-sm transition active:scale-[.99]"
-          style={{
-            background: "var(--surface)",
-            border: "1.5px solid var(--primary)",
-          }}
-        >
-          <div
-            className="grid h-11 w-11 flex-shrink-0 place-items-center rounded-xl"
-            style={{
-              background: "rgba(31,95,255,.1)",
-              color: "var(--primary)",
-            }}
-          >
-            <TimerReset className="h-5 w-5" />
-          </div>
-          <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-1.5 text-[14px] font-semibold">
-              Restructure payment
-              <span
-                className="rounded-full px-1.5 py-px text-[9px] font-bold uppercase tracking-wider"
-                style={{
-                  background: "rgba(31,95,255,.12)",
-                  color: "var(--primary)",
-                  letterSpacing: ".05em",
-                }}
-              >
-                New
-              </span>
-            </div>
-            <div
-              className="mt-0.5 text-[11.5px] leading-relaxed"
-              style={{ color: "var(--text-2)" }}
-            >
-              Extend the term, pause for a month, or switch to interest-only
-              — if your situation has changed.
-            </div>
-          </div>
-          <ArrowRight
-            className="h-4 w-4 flex-shrink-0"
-            style={{ color: "var(--primary)" }}
-          />
-        </Link>
-
         <SectionTitle>Loan info</SectionTitle>
         <Card>
           <div className="kv-row">
