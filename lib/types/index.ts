@@ -130,6 +130,14 @@ export interface Chat {
 
 // ============ Misc ============
 
+/**
+ * Notification taxonomy — three buckets surfaced as tabs in the app:
+ *   • reminder      — due dates, document upload requests, action-needed nudges
+ *   • transaction   — payment posted, loan disbursed, approval/rejection events
+ *   • announcement  — news, features, branch closures, security alerts
+ */
+export type NotificationCategory = "reminder" | "transaction" | "announcement";
+
 export interface NotificationItem {
   id: ID;
   icon: string;
@@ -137,7 +145,7 @@ export interface NotificationItem {
   body: string;
   time: string;
   unread: boolean;
-  category: "payment" | "loan" | "news" | "reward" | "security";
+  category: NotificationCategory;
 }
 
 export interface Branch {

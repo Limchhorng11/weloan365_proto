@@ -7,6 +7,7 @@ import type {
 } from "@/lib/types";
 
 export const notifications: NotificationItem[] = [
+  /* ── Reminders ─────────────────────────────────────────── */
   {
     id: "n1",
     icon: "credit-card",
@@ -14,8 +15,28 @@ export const notifications: NotificationItem[] = [
     body: "Your SME loan installment of $162.50 is due in 3 days.",
     time: "2h ago",
     unread: true,
-    category: "payment",
+    category: "reminder",
   },
+  {
+    id: "n6",
+    icon: "alert-circle",
+    title: "Document needed",
+    body: "Upload your updated payslip to keep your loan inquiry moving.",
+    time: "Yesterday",
+    unread: true,
+    category: "reminder",
+  },
+  {
+    id: "n7",
+    icon: "calendar-clock",
+    title: "Consultation tomorrow",
+    body: "Branch visit booked at Phnom Penh HQ · 10:00 AM, May 16, 2026.",
+    time: "2 days ago",
+    unread: false,
+    category: "reminder",
+  },
+
+  /* ── Transactions ──────────────────────────────────────── */
   {
     id: "n2",
     icon: "check-circle",
@@ -23,16 +44,36 @@ export const notifications: NotificationItem[] = [
     body: "Your Housing Loan of $8,000 has been approved. Funds will be disbursed within 24 hours.",
     time: "1 day ago",
     unread: true,
-    category: "loan",
+    category: "transaction",
   },
   {
+    id: "n8",
+    icon: "wallet",
+    title: "Payment received",
+    body: "Installment #6 of $162.50 posted via Bakong KHQR. Ref TX-L3-006.",
+    time: "May 15, 9:42 AM",
+    unread: false,
+    category: "transaction",
+  },
+  {
+    id: "n9",
+    icon: "banknote",
+    title: "Disbursement complete",
+    body: "$8,000 transferred to your ABA account ••• 4231.",
+    time: "May 14",
+    unread: false,
+    category: "transaction",
+  },
+
+  /* ── Announcements ─────────────────────────────────────── */
+  {
     id: "n3",
-    icon: "bell",
+    icon: "megaphone",
     title: "New Feature",
     body: "You can now pay your installments via Bakong KHQR directly from the app.",
     time: "3 days ago",
     unread: false,
-    category: "news",
+    category: "announcement",
   },
   {
     id: "n4",
@@ -41,7 +82,7 @@ export const notifications: NotificationItem[] = [
     body: "All Weloan365 branches will be closed Apr 14–16. The app stays open as usual.",
     time: "Apr 15",
     unread: false,
-    category: "news",
+    category: "announcement",
   },
   {
     id: "n5",
@@ -50,7 +91,7 @@ export const notifications: NotificationItem[] = [
     body: "New login detected from Samsung Galaxy S24. If this wasn't you, please review your account.",
     time: "Apr 10",
     unread: false,
-    category: "security",
+    category: "announcement",
   },
 ];
 

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Settings } from "lucide-react";
+import { Bell, Settings } from "lucide-react";
 import { NavHeader } from "@/components/ui/NavHeader";
 import { Screen, ScreenBody } from "@/components/ui/Screen";
 import { Segmented } from "@/components/ui/Segmented";
@@ -10,25 +10,29 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { DynamicIcon } from "@/components/domain/loan/DynamicIcon";
 import { useToast } from "@/lib/hooks/useToast";
 import { notifications } from "@/lib/mock";
-import { Bell } from "lucide-react";
-import type { NotificationItem } from "@/lib/types";
+import type { NotificationCategory } from "@/lib/types";
 
-type Filter = "all" | "payment" | "loan" | "promo" | "news";
+/**
+ * Notifications list (Workshop ref: Session 3.F6, screen 2 + 3).
+ *
+ * Three tabs only — matches the customer-facing taxonomy:
+ *   • Reminder      — due dates, document requests
+ *   • Transactions  — payment posted, approval, disbursement
+ *   • Announcement  — news, features, security
+ */
+const TABS: { value: NotificationCategory; label: string }[] = [
+  { value: "reminder",     label: "Reminder" },
+  { value: "transaction",  label: "Transactions" },
+  { value: "announcement", label: "Announcement" },
+];
 
-const filterFor: Record<Filter, (n: NotificationItem) => boolean> = {
-  all: () => true,
-  payment: (n) => n.category === "payment",
-  loan: (n) => n.category === "loan",
-  promo: (n) => n.category === "reward",
-  news: (n) => n.category === "news" || n.category === "security",
-};
-
-/** Notifications list (Workshop ref: Session 3.F6, screen 2 + 3). */
 export default function NotificationsPage() {
   const toast = useToast();
-  const [filter, setFilter] = useState<Filter>("all");
+  const [tab, setTab] = useState<NotificationCategory>("reminder");
 
-  const filtered = notifications.filter(filterFor[filter]);
+  const filtered = notifications.filter((n) => n.category === tab);
+  const unreadCount = (cat: NotificationCategory) =>
+    notifications.filter((n) => n.category === cat && n.unread).length;
 
   return (
     <Screen>
@@ -45,22 +49,21 @@ export default function NotificationsPage() {
       />
       <ScreenBody noPad>
         <div className="px-4 pt-3">
-          <div className="mb-3 flex items-center justify-between">
-            <Segmented
-              value={filter}
-              onChange={setFilter}
-              options={[
-                { value: "all", label: "All" },
-                { value: "payment", label: "Payment" },
-                { value: "loan", label: "Loan" },
-                { value: "promo", label: "Rewards" },
-                { value: "news", label: "News" },
-              ]}
-            />
-          </div>
+          <Segmented
+            value={tab}
+            onChange={setTab}
+            options={TABS.map((t) => {
+              const c = unreadCount(t.value);
+              return {
+                value: t.value,
+                label: c > 0 ? `${t.label} · ${c}` : t.label,
+              };
+            })}
+          />
+
           <button
             onClick={() => toast("All notifications marked as read", "success")}
-            className="mb-2 text-xs font-medium"
+            className="mb-2 mt-3 text-xs font-medium"
             style={{ color: "var(--primary)" }}
           >
             Mark all as read

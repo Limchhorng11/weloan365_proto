@@ -2,13 +2,11 @@
 
 import { useState } from "react";
 import {
+  AlertCircle,
   Bell,
-  CreditCard,
-  FileText,
   Megaphone,
   Moon,
-  Newspaper,
-  Shield,
+  Wallet,
 } from "lucide-react";
 import { NavHeader } from "@/components/ui/NavHeader";
 import { Screen, ScreenBody } from "@/components/ui/Screen";
@@ -33,11 +31,9 @@ export default function NotificationSettingsPage() {
   const toast = useToast();
 
   const [cats, setCats] = useState<CategorySetting[]>([
-    { key: "payment",  icon: CreditCard, title: "Payment Reminders", sub: "Due in 3 days, 1 day, today",      push: true,  sms: true,  email: false },
-    { key: "loan",     icon: FileText,   title: "Loan Status",       sub: "Approval, rejection, disbursement", push: true,  sms: true,  email: true  },
-    { key: "promo",    icon: Megaphone,  title: "Promotions",        sub: "Special rates and offers",          push: true,  sms: false, email: true  },
-    { key: "news",     icon: Newspaper,  title: "News & Education",  sub: "Tips, blogs, announcements",        push: false, sms: false, email: true  },
-    { key: "security", icon: Shield,     title: "Account Security",  sub: "New logins, PIN changes",           push: true,  sms: true,  email: true  },
+    { key: "reminder",     icon: AlertCircle, title: "Reminders",     sub: "Payment due, document uploads, consultations", push: true,  sms: true,  email: false },
+    { key: "transaction",  icon: Wallet,      title: "Transactions",  sub: "Payment posted, approval, disbursement",       push: true,  sms: true,  email: true  },
+    { key: "announcement", icon: Megaphone,   title: "Announcements", sub: "News, features, branch closures, security",    push: true,  sms: false, email: true  },
   ]);
 
   const [quietEnabled, setQuietEnabled] = useState(true);
@@ -68,7 +64,8 @@ export default function NotificationSettingsPage() {
         <Card style={{ background: "rgba(31,95,255,.05)", border: "1px solid rgba(31,95,255,.15)" }}>
           <p className="text-xs leading-relaxed" style={{ color: "var(--text-2)" }}>
             Choose which categories you want to hear about and through which
-            channel. Critical security alerts cannot be turned off.
+            channel. Critical security alerts under Announcements always come
+            through.
           </p>
         </Card>
 
@@ -76,7 +73,6 @@ export default function NotificationSettingsPage() {
         <div className="flex flex-col gap-2.5">
           {cats.map((c) => {
             const Icon = c.icon;
-            const locked = c.key === "security";
             return (
               <Card key={c.key} style={{ padding: 14 }}>
                 <div className="flex items-start gap-3">
@@ -87,12 +83,7 @@ export default function NotificationSettingsPage() {
                     <Icon className="h-[18px] w-[18px]" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="text-[15px] font-medium">{c.title}</div>
-                      {locked && (
-                        <span className="badge info text-[10px]">Required</span>
-                      )}
-                    </div>
+                    <div className="text-[15px] font-medium">{c.title}</div>
                     <div
                       className="mt-0.5 text-xs"
                       style={{ color: "var(--text-2)" }}
@@ -113,7 +104,7 @@ export default function NotificationSettingsPage() {
                       <Switch
                         checked={c[channel]}
                         onChange={(e) =>
-                          !locked && update(c.key, channel, e.target.checked)
+                          update(c.key, channel, e.target.checked)
                         }
                       />
                     </label>
